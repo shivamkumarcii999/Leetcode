@@ -1,45 +1,41 @@
 class Solution {
     public double separateSquares(int[][] squares) {
 
-        double left = 0, right = 1000000000;  // safe search range
+        double totalArea = 0;
+        double low = Double.MAX_VALUE;
+        double high = Double.MIN_VALUE;
 
-        for (int i = 0; i < 60; i++) { // binary search precision
-            double mid = (left + right) / 2.0;
+        for (int[] s : squares) {
+            int y = s[1], l = s[2];
+            totalArea += (double) l * l;
+            low = Math.min(low, y);
+            high = Math.max(high, y + l);
+        }
 
-            double above = 0.0, below = 0.0;
+        for (int i = 0; i < 60; i++) {
+            double mid = (low + high) / 2;
+            double below = 0;
 
-            for (int[] sq : squares) {
-                double x = sq[0];
-                double y = sq[1];
-                double s = sq[2];
+            for (int[] s : squares) {
+                double bottom = s[1];
+                double top = s[1] + s[2];
+                double l = s[2];
 
-                double top = y + s;
-
-                if (top <= mid) {
-                    // whole square is below line
-                    below += s * s;
-                } 
-                else if (y >= mid) {
-                    // whole square is above line
-                    above += s * s;
-                } 
-                else {
-                    // square is split
-                    double upperPart = top - mid;     // height above line
-                    double lowerPart = mid - y;      // height below line
-
-                    above += upperPart * s;
-                    below += lowerPart * s;
+                if (mid <= bottom) {
+                    continue;
+                } else if (mid >= top) {
+                    below += l * l;
+                } else {
+                    below += (mid - bottom) * l;
                 }
             }
 
-            // We need equal areas
-            if (above > below)
-                left = mid;
+            if (below * 2 < totalArea)
+                low = mid;
             else
-                right = mid;
+                high = mid;
         }
 
-        return left;   // or right, both converge
+        return low;
     }
 }
