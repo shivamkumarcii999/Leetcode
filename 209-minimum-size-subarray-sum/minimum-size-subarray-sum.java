@@ -11,10 +11,7 @@ class Solution {
             left++;
             }
             }
-            if(min==Integer.MAX_VALUE){
-                min=0;
-            }
-              return min;
+            return min==Integer.MAX_VALUE ? 0 : min;
         }
       
     }
